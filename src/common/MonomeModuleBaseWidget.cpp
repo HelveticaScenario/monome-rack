@@ -34,7 +34,7 @@ Menu* MonomeModuleBaseWidget::createContextMenu()
     {
         auto* connectionItem = new MonomeConnectionItem();
         connectionItem->text = device->type + " (" + device->id + ")";
-        connectionItem->rightText = (module->gridConnection->device == device) ? "✔" : "";
+        connectionItem->rightText = (module->gridConnection && module->gridConnection->device == device) ? "✔" : "";
         connectionItem->module = module;
         connectionItem->device = device;
         menu->addChild(connectionItem);

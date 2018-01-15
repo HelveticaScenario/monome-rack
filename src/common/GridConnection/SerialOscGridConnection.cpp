@@ -1,6 +1,6 @@
 #include "SerialOscGridConnection.hpp"
+#include "GridConnectionManager.hpp"
 #include "MonomeModuleBase.hpp"
-#include "VirtualGridModule.hpp"
 
 SerialOscGridConnection::SerialOscGridConnection(MonomeModuleBase* module, const MonomeDevice* const device)
     : GridConnection(module, device)
@@ -13,7 +13,7 @@ void SerialOscGridConnection::connect()
 
 void SerialOscGridConnection::disconnect()
 {
-    module->serialOscDriver->sendDeviceLedAllCommand(device, false);
+    GridConnectionManager::theManager->serialOscDriver->sendDeviceLedAllCommand(device, false);
 }
 
 void SerialOscGridConnection::processInput()
@@ -22,7 +22,7 @@ void SerialOscGridConnection::processInput()
 
 void SerialOscGridConnection::updateRow(int x_offset, int y, uint8_t bitfield)
 {
-    module->serialOscDriver->sendDeviceLedRowCommand(device, x_offset, y, bitfield);
+    GridConnectionManager::theManager->serialOscDriver->sendDeviceLedRowCommand(device, x_offset, y, bitfield);
 }
 
 void SerialOscGridConnection::updateQuadrant(int x, int y, uint8_t* leds)
@@ -40,7 +40,7 @@ void SerialOscGridConnection::updateQuadrant(int x, int y, uint8_t* leds)
                     bits |= 1 << j;
                 }
             }
-            module->serialOscDriver->sendDeviceLedRowCommand(device, 0, i, bits);
+            GridConnectionManager::theManager->serialOscDriver->sendDeviceLedRowCommand(device, 0, i, bits);
         }
     }
     else if (device->protocol == PROTOCOL_SERIES)
@@ -57,17 +57,17 @@ void SerialOscGridConnection::updateQuadrant(int x, int y, uint8_t* leds)
                 }
             }
         }
-        module->serialOscDriver->sendDeviceLedMapCommand(device, x, y, map);
+        GridConnectionManager::theManager->serialOscDriver->sendDeviceLedMapCommand(device, x, y, map);
     }
     else
     {
-        module->serialOscDriver->sendDeviceLedLevelMapCommand(device, x, y, leds);
+        GridConnectionManager::theManager->serialOscDriver->sendDeviceLedLevelMapCommand(device, x, y, leds);
     }
 }
 
 void SerialOscGridConnection::clearAll()
 {
-    module->serialOscDriver->sendDeviceLedAllCommand(device, false);
+    GridConnectionManager::theManager->serialOscDriver->sendDeviceLedAllCommand(device, false);
 }
 
 bool SerialOscGridConnection::operator==(const SerialOscGridConnection& other) const
