@@ -1,23 +1,26 @@
 #include "MonomeModuleBase.hpp"
-#include "SerialOscGridConnection.hpp"
-#include "VirtualGridConnection.hpp"
 #include "VirtualGridModule.hpp"
 #include "VirtualGridWidget.hpp"
 #include "base64.h"
 
+#include <algorithm>
+
 using namespace std;
+
+std::vector<MonomeModuleBase*> MonomeModuleBase::allModules;
 
 MonomeModuleBase::MonomeModuleBase(int numParams, int numInputs, int numOutputs, int numLights)
     : Module(numParams, numInputs, numOutputs, numLights)
 {
     gridConnection = NULL;
-    serialOscDriver = new SerialOsc("rack", 13000);
-    serialOscDriver->start(this);
     firstStep = true;
+
+    allModules.push_back(this);
 }
 
 MonomeModuleBase::~MonomeModuleBase()
 {
+    allModules.erase(std::remove(allModules.begin(), allModules.end(), this));
     delete gridConnection;
 }
 
@@ -67,7 +70,7 @@ void MonomeModuleBase::deviceFound(const MonomeDevice* const device)
 {
     if (!gridConnection && device->id == unresolvedConnectionId)
     {
-        setGridConnection(new SerialOscGridConnection(this, device));
+        GridConnectionManager::theManager->connectModuleToDeviceId(this, unresolvedConnectionId);
     }
 }
 
@@ -160,9 +163,9 @@ void MonomeModuleBase::readSerialMessages()
 void MonomeModuleBase::step()
 {
     // Execute setup tasks that must be run after full Rack is deserialized from JSON
-    if (firstStep)
+    if (firstStep && unresolvedConnectionId != "")
     {
-        resolveSavedGridConnection();
+        GridConnectionManager::theManager->connectModuleToDeviceId(this, unresolvedConnectionId);
         firstStep = false;
     }
 
@@ -180,40 +183,6 @@ void MonomeModuleBase::step()
 
     // Act on serial output from module to the outside world (grid LEDs, etc.)
     readSerialMessages();
-}
-
-void MonomeModuleBase::resolveSavedGridConnection()
-{
-    // Resolve connections from JSON after the entire rack has been deserialized
-    if (unresolvedConnectionId != "")
-    {
-        // enumerate detected serialosc devices
-        for (MonomeDevice* device : serialOscDriver->getDevices())
-        {
-            if (device->id == unresolvedConnectionId)
-            {
-                auto connection = new SerialOscGridConnection(this, device);
-                setGridConnection(connection);
-                return;
-            }
-        }
-
-        // enumerate modules
-        for (rack::Widget* w : rack::gRackWidget->moduleContainer->children)
-        {
-            VirtualGridWidget* gridWidget = dynamic_cast<VirtualGridWidget*>(w);
-            if (gridWidget)
-            {
-                auto gridModule = dynamic_cast<VirtualGridModule*>(gridWidget->module);
-                if (gridModule->device.id == unresolvedConnectionId)
-                {
-                    auto connection = new VirtualGridConnection(this, gridModule);
-                    setGridConnection(connection);
-                    return;
-                }
-            }
-        }
-    }
 }
 
 json_t* MonomeModuleBase::toJson()

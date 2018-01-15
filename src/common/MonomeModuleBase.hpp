@@ -1,5 +1,5 @@
 #include "FirmwareManager.hpp"
-#include "SerialOsc.h"
+#include "GridConnectionManager.hpp"
 #include "rack.hpp"
 
 #pragma once
@@ -19,16 +19,18 @@
 
 struct GridConnection;
 
-struct MonomeModuleBase : rack::Module, SerialOsc::Listener
+struct MonomeModuleBase : rack::Module
 {
     FirmwareManager firmware;
 
     MonomeModuleBase(int numParams, int numInputs, int numOutputs, int numLights);
+    ~MonomeModuleBase();
 
-    // SerialOsc::Listener methods
-    void deviceFound(const MonomeDevice* const device) override;
-    void deviceRemoved(const std::string& id) override;
-    void buttonPressMessageReceived(MonomeDevice* device, int x, int y, bool state) override;
+    static std::vector<MonomeModuleBase*> allModules;
+
+    void deviceFound(const MonomeDevice* const device);
+    void deviceRemoved(const std::string& id);
+    void buttonPressMessageReceived(MonomeDevice* device, int x, int y, bool state);
 
     // Rack module methods
     void step() override;
@@ -38,13 +40,10 @@ struct MonomeModuleBase : rack::Module, SerialOsc::Listener
     // MonomeModuleBase virtual methods
     virtual void processInputs() = 0;
     virtual void processOutputs() = 0;
-
-    ~MonomeModuleBase();
-    void setGridConnection(GridConnection* newConnection);
-    void resolveSavedGridConnection();
     virtual void readSerialMessages();
 
-    SerialOsc* serialOscDriver;
+    void setGridConnection(GridConnection* newConnection);
+
     GridConnection* gridConnection;
     bool firstStep;
     std::string unresolvedConnectionId;
