@@ -233,6 +233,7 @@ void register_interrupts() {}
 u8* current_ftdi_message;
 u8 current_ftdi_message_length;
 u8 ftdiConnect;
+u8 empty_message_buffer[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 void ftdi_read(void)
 {
@@ -280,8 +281,16 @@ void ftdi_setup(void)
 
 u8* ftdi_rx_buf(void)
 {
-    return current_ftdi_message;
+    if (current_ftdi_message != NULL)
+    {
+        return current_ftdi_message;
+    }
+    else
+    {
+        return &empty_message_buffer;
+    }
 }
+
 u8 ftdi_rx_bytes(void)
 {
     return current_ftdi_message_length;
