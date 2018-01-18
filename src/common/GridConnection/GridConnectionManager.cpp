@@ -60,7 +60,7 @@ void GridConnectionManager::getDevices(std::vector<MonomeDevice*>& devices)
     }
 }
 
-void GridConnectionManager::connectModuleToDevice(MonomeModuleBase* module, MonomeDevice* device)
+void GridConnectionManager::connectModuleToDevice(MonomeModuleBase* module, const MonomeDevice* const device)
 {
     if (device->id[1] == 'v')
     {
@@ -72,7 +72,7 @@ void GridConnectionManager::connectModuleToDevice(MonomeModuleBase* module, Mono
                 auto gridModule = dynamic_cast<VirtualGridModule*>(gridWidget->module);
                 if (&(gridModule->device) == device)
                 {
-                    module->setGridConnection(new VirtualGridConnection(module, gridModule));
+                    createConnection(module, new VirtualGridConnection(module, gridModule));
                     return;
                 }
             }
@@ -80,7 +80,7 @@ void GridConnectionManager::connectModuleToDevice(MonomeModuleBase* module, Mono
     }
     else
     {
-        module->setGridConnection(new SerialOscGridConnection(module, device));
+        createConnection(module, new SerialOscGridConnection(module, device));
     }
 }
 
@@ -92,7 +92,7 @@ void GridConnectionManager::connectModuleToDeviceId(MonomeModuleBase* module, st
         if (device->id == deviceId)
         {
             auto connection = new SerialOscGridConnection(module, device);
-            module->setGridConnection(connection);
+            createConnection(module, connection);
             return;
         }
     }
@@ -107,9 +107,56 @@ void GridConnectionManager::connectModuleToDeviceId(MonomeModuleBase* module, st
             if (gridModule->device.id == deviceId)
             {
                 auto connection = new VirtualGridConnection(module, gridModule);
-                module->setGridConnection(connection);
+                createConnection(module, connection);
                 return;
             }
         }
     }
+}
+
+void GridConnectionManager::disconnectDevice(const MonomeDevice* const device)
+{
+    if (activeConnections.find(device) != activeConnections.end())
+    {
+        activeConnections[device]->setGridConnection(nullptr);
+        activeConnections.erase(device);
+    }
+}
+
+void GridConnectionManager::disconnectDeviceId(std::string deviceId)
+{
+    for (MonomeDevice* device : serialOscDriver->getDevices())
+    {
+        if (device->id == deviceId)
+        {
+            disconnectDevice(device);
+            return;
+        }
+    }
+
+    // enumerate modules
+    for (rack::Widget* w : rack::gRackWidget->moduleContainer->children)
+    {
+        VirtualGridWidget* gridWidget = dynamic_cast<VirtualGridWidget*>(w);
+        if (gridWidget)
+        {
+            auto gridModule = dynamic_cast<VirtualGridModule*>(gridWidget->module);
+            if (gridModule->device.id == deviceId)
+            {
+                disconnectDevice(&(gridModule->device));
+                return;
+            }
+        }
+    }
+}
+
+void GridConnectionManager::createConnection(MonomeModuleBase* module, GridConnection* connection)
+{
+    if (module->gridConnection && (module->gridConnection->device == connection->device))
+    {
+        return;
+    }
+    disconnectDevice(connection->device);
+    activeConnections[connection->device] = module;
+    module->setGridConnection(connection);
 }

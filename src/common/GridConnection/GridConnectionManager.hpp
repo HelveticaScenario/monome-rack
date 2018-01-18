@@ -1,18 +1,20 @@
 #include "GridConnection.hpp"
 #include "SerialOsc.h"
 
+#include <map>
 #include <vector>
 
 #pragma once
 
 class SerialOsc;
-class MonomeModuleBase;
+struct MonomeModuleBase;
 
 struct GridConnectionManager : SerialOsc::Listener
 {
     GridConnectionManager();
 
     static GridConnectionManager* theManager;
+    SerialOsc* serialOscDriver;
 
     // SerialOsc::Listener methods
     void deviceFound(const MonomeDevice* const device) override;
@@ -20,8 +22,12 @@ struct GridConnectionManager : SerialOsc::Listener
     void buttonPressMessageReceived(MonomeDevice* device, int x, int y, bool state) override;
 
     void getDevices(std::vector<MonomeDevice*>& devices);
-    void connectModuleToDevice(MonomeModuleBase* module, MonomeDevice* device);
+    void connectModuleToDevice(MonomeModuleBase* module, const MonomeDevice* const device);
     void connectModuleToDeviceId(MonomeModuleBase* module, std::string deviceId);
+    void disconnectDevice(const MonomeDevice* const device);
+    void disconnectDeviceId(std::string deviceId);
 
-    SerialOsc* serialOscDriver;
+protected:
+    void createConnection(MonomeModuleBase* module, GridConnection* connection);
+    std::map<const MonomeDevice* const, MonomeModuleBase*> activeConnections;
 };

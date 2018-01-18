@@ -21,7 +21,11 @@ MonomeModuleBase::MonomeModuleBase(int numParams, int numInputs, int numOutputs,
 MonomeModuleBase::~MonomeModuleBase()
 {
     allModules.erase(std::remove(allModules.begin(), allModules.end(), this));
-    delete gridConnection;
+    if (gridConnection)
+    {
+        GridConnectionManager::theManager->disconnectDevice(gridConnection->device);
+        delete gridConnection;
+    }
 }
 
 void MonomeModuleBase::setGridConnection(GridConnection* newConnection)

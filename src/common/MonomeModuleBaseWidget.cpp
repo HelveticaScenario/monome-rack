@@ -40,7 +40,7 @@ Menu* MonomeModuleBaseWidget::createContextMenu()
         menu->addChild(connectionItem);
     }
 
-    if (devices.size() > 0)
+    if (devices.size() == 0)
     {
         menu->addChild(construct<MenuLabel>(&MenuLabel::text, "(no physical or virtual devices found)"));
     }
