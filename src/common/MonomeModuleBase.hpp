@@ -2,6 +2,8 @@
 #include "GridConnectionManager.hpp"
 #include "rack.hpp"
 
+#include <deque>
+
 #pragma once
 
 #define B00 32
@@ -42,7 +44,10 @@ struct MonomeModuleBase : rack::Module
     virtual void processOutputs() = 0;
     virtual void readSerialMessages();
 
-    void setGridConnection(GridConnection* newConnection);
+    void scheduleGridConnectionEvent(GridConnection* newConnection);
+    void processGridConnectionEvent(GridConnection* newConnection);
+
+    std::deque<GridConnection*> connectionEvents;
 
     GridConnection* gridConnection;
     bool firstStep;

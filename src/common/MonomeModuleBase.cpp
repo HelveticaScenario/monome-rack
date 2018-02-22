@@ -28,12 +28,16 @@ MonomeModuleBase::~MonomeModuleBase()
     }
 }
 
-void MonomeModuleBase::setGridConnection(GridConnection* newConnection)
+void MonomeModuleBase::scheduleGridConnectionEvent(GridConnection* newConnection)
+{
+    connectionEvents.push_back(newConnection);
+}
+
+void MonomeModuleBase::processGridConnectionEvent(GridConnection* newConnection)
 {
     if (gridConnection)
     {
         gridConnection->clearAll();
-        gridConnection->disconnect();
         delete gridConnection;
     }
 
@@ -41,8 +45,6 @@ void MonomeModuleBase::setGridConnection(GridConnection* newConnection)
 
     if (gridConnection)
     {
-        gridConnection->disconnect();
-        gridConnection->connect();
         unresolvedConnectionId = "";
 
         string id = gridConnection->device->id;
@@ -187,6 +189,13 @@ void MonomeModuleBase::step()
 
     // Act on serial output from module to the outside world (grid LEDs, etc.)
     readSerialMessages();
+
+    // Process grid connection events, one per frame
+    if (connectionEvents.size() > 0)
+    {
+        processGridConnectionEvent(connectionEvents.front());
+        connectionEvents.pop_front();
+    }
 }
 
 json_t* MonomeModuleBase::toJson()

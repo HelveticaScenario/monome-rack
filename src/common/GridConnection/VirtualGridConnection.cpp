@@ -6,20 +6,7 @@ VirtualGridConnection::VirtualGridConnection(MonomeModuleBase* controlledModule,
     : GridConnection(controlledModule, &gridModule->device)
 {
     grid = gridModule;
-}
-
-void VirtualGridConnection::connect()
-{
-    grid->connectedModule = module;
-}
-
-void VirtualGridConnection::disconnect()
-{
-    grid->connectedModule = NULL;
-}
-
-void VirtualGridConnection::processInput()
-{
+    grid->connectedModule = controlledModule;
 }
 
 void VirtualGridConnection::updateRow(int x_offset, int y, uint8_t bitfield)

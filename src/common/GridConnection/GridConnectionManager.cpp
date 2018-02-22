@@ -118,7 +118,7 @@ void GridConnectionManager::disconnectDevice(const MonomeDevice* const device)
 {
     if (activeConnections.find(device) != activeConnections.end())
     {
-        activeConnections[device]->setGridConnection(nullptr);
+        activeConnections[device]->scheduleGridConnectionEvent(nullptr);
         activeConnections.erase(device);
     }
 }
@@ -158,5 +158,6 @@ void GridConnectionManager::createConnection(MonomeModuleBase* module, GridConne
     }
     disconnectDevice(connection->device);
     activeConnections[connection->device] = module;
-    module->setGridConnection(connection);
+    module->scheduleGridConnectionEvent(connection);
+    printf("connected %s to %p", connection->device->id.c_str(), module);
 }

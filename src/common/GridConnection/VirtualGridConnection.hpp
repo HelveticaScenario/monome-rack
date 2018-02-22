@@ -9,10 +9,7 @@ struct VirtualGridConnection : GridConnection
     VirtualGridConnection(MonomeModuleBase* controlledModule, VirtualGridModule* gridModule);
     VirtualGridModule* grid;
 
-    void connect() override;
-    void disconnect() override;
-    void processInput() override;
-    void updateRow(int x_offset, int y, uint8_t bitfield) override; 
+    void updateRow(int x_offset, int y, uint8_t bitfield) override;
     void updateQuadrant(int x, int y, uint8_t* leds) override;
     void clearAll() override;
 

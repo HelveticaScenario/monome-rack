@@ -7,19 +7,6 @@ SerialOscGridConnection::SerialOscGridConnection(MonomeModuleBase* module, const
 {
 }
 
-void SerialOscGridConnection::connect()
-{
-}
-
-void SerialOscGridConnection::disconnect()
-{
-    GridConnectionManager::theManager->serialOscDriver->sendDeviceLedAllCommand(device, false);
-}
-
-void SerialOscGridConnection::processInput()
-{
-}
-
 void SerialOscGridConnection::updateRow(int x_offset, int y, uint8_t bitfield)
 {
     GridConnectionManager::theManager->serialOscDriver->sendDeviceLedRowCommand(device, x_offset, y, bitfield);
