@@ -9,6 +9,12 @@ struct MonomeModuleBase;
 
 struct VirtualGridModule : rack::Module
 {
+    enum OutputIds
+    {
+        USB_OUTPUT,
+        NUM_OUTPUTS
+    };
+
     MonomeModuleBase* connectedModule = NULL;
     MonomeDevice device;
 

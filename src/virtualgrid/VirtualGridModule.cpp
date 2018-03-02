@@ -2,7 +2,7 @@
 #include "MonomeModuleBase.hpp"
 
 VirtualGridModule::VirtualGridModule(unsigned w, unsigned h)
-    : Module(w * h, 0, 0, 0)
+    : Module(w * h, 0, NUM_OUTPUTS, 0)
 {
     device.width = w;
     device.height = h;

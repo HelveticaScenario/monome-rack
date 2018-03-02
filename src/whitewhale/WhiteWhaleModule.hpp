@@ -15,6 +15,7 @@ struct WhiteWhaleModule : MonomeModuleBase
     enum InputIds
     {
         CLOCK_INPUT,
+        USB_INPUT,
         NUM_INPUTS
     };
 

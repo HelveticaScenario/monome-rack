@@ -1,5 +1,5 @@
-#include "EarthseaModule.hpp"
 #include "EarthseaWidget.hpp"
+#include "EarthseaModule.hpp"
 #include "MonomeWidgets.hpp"
 
 using namespace rack;
@@ -17,8 +17,6 @@ EarthseaWidget::EarthseaWidget()
         addChild(panel);
     }
 
-    addChild(createScrew<USBAJack>(Vec(10, 338)));
-
     addParam(createParam<TL1105>(Vec(62, 336), module, EarthseaModule::BUTTON_PARAM, 0.0, 1.0, 0.0));
     addParam(createParam<MonomeKnob>(Vec(12, 30), module, EarthseaModule::CV1_PARAM, 0.0, 1.0, 0.5));
     addParam(createParam<MonomeKnob>(Vec(12, 116), module, EarthseaModule::CV2_PARAM, 0.0, 1.0, 0.5));
@@ -35,6 +33,8 @@ EarthseaWidget::EarthseaWidget()
     addOutput(createOutput<PJ301MPort>(Vec(50, 248), module, EarthseaModule::CV3_OUTPUT));
     addOutput(createOutput<PJ301MPort>(Vec(50, 286), module, EarthseaModule::POS_OUTPUT));
     addOutput(createOutput<PJ301MPort>(Vec(13, 268), module, EarthseaModule::EDGE_OUTPUT));
+
+    addInput(createInput<USBAJack>(Vec(8, 324), module, EarthseaModule::USB_INPUT));
 }
 
 void EarthseaWidget::randomize()

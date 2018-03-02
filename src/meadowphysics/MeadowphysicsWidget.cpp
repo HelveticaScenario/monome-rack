@@ -1,5 +1,5 @@
-#include "MeadowphysicsModule.hpp"
 #include "MeadowphysicsWidget.hpp"
+#include "MeadowphysicsModule.hpp"
 #include "MonomeWidgets.hpp"
 
 using namespace rack;
@@ -16,8 +16,6 @@ MeadowphysicsWidget::MeadowphysicsWidget()
         panel->box.size = box.size;
         addChild(panel);
     }
-
-    addChild(createScrew<USBAJack>(Vec(10, 338)));
 
     addParam(createParam<TL1105>(Vec(62, 336), module, MeadowphysicsModule::BUTTON_PARAM, 0.0, 1.0, 0.0));
     addParam(createParam<MonomeKnob>(Vec(12, 230), module, MeadowphysicsModule::CLOCK_PARAM, 0.0, 1.0, 0.5));
@@ -42,6 +40,8 @@ MeadowphysicsWidget::MeadowphysicsWidget()
     addOutput(createOutput<PJ301MPort>(Vec(50, 187), module, MeadowphysicsModule::TRIG8_OUTPUT));
     addInput(createInput<PJ301MPort>(Vec(13, 286), module, MeadowphysicsModule::CLOCK_INPUT));
     addOutput(createOutput<PJ301MPort>(Vec(50, 286), module, MeadowphysicsModule::CLOCK_OUTPUT));
+
+    addInput(createInput<USBAJack>(Vec(8, 324), module, MeadowphysicsModule::USB_INPUT));
 }
 
 void MeadowphysicsWidget::randomize()

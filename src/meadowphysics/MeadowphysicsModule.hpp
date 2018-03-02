@@ -14,6 +14,7 @@ struct MeadowphysicsModule : MonomeModuleBase
     enum InputIds
     {
         CLOCK_INPUT,
+        USB_INPUT,
         NUM_INPUTS
     };
 

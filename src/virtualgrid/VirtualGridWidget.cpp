@@ -1,4 +1,5 @@
 #include "VirtualGridWidget.hpp"
+#include "MonomeWidgets.hpp"
 #include "VirtualGridModule.hpp"
 
 #include <iomanip>
@@ -208,18 +209,19 @@ VirtualGridWidget::VirtualGridWidget(unsigned w, unsigned h, unsigned model)
 
     theme = model == 5 ? VariYellow : MonoRed;
 
-    box.size = Vec(43.125 * w + 30, 47.5 * h);
+    int plugOffset = 24;
+    int spacing = 8;
+
+    margins.x = 15;
+    margins.y = 15;
+
+    box.size = Vec(43.125 * w + margins.x * 2 + plugOffset + 6, 47.5 * h);
 
     {
         auto panel = new LightPanel();
         panel->box.size = box.size;
         addChild(panel);
     }
-
-    margins.x = 15;
-    margins.y = 15;
-
-    int spacing = 8;
 
     //int max_width = (box.size.x - margins.x * 2 - (w - 1) * spacing) / w;
     int max_height = (box.size.y - margins.y * 2 - (h - 1) * spacing) / h;
@@ -229,7 +231,7 @@ VirtualGridWidget::VirtualGridWidget(unsigned w, unsigned h, unsigned model)
     {
         for (unsigned i = 0; i < w; i++)
         {
-            int x = margins.x + i * (button_size + spacing);
+            int x = plugOffset + margins.x + i * (button_size + spacing);
             int y = margins.y + j * (button_size + spacing);
             int n = i + j * w;
 
@@ -241,6 +243,8 @@ VirtualGridWidget::VirtualGridWidget(unsigned w, unsigned h, unsigned model)
             addParam(key);
         }
     }
+
+    addOutput(createOutput<USBMiniBJack>(Vec(6, 16), module, VirtualGridModule::USB_OUTPUT));
 
     isDraggingKeys = false;
 }

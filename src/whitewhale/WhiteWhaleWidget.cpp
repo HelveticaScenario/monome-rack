@@ -1,6 +1,6 @@
-#include "WhiteWhaleModule.hpp"
 #include "WhiteWhaleWidget.hpp"
 #include "MonomeWidgets.hpp"
+#include "WhiteWhaleModule.hpp"
 
 using namespace rack;
 
@@ -16,8 +16,6 @@ WhiteWhaleWidget::WhiteWhaleWidget()
         panel->box.size = box.size;
         addChild(panel);
     }
-
-    addChild(createScrew<USBAJack>(Vec(10, 338)));
 
     addParam(createParam<TL1105>(Vec(62, 336), module, WhiteWhaleModule::BUTTON_PARAM, 0.0, 1.0, 0.0));
     addParam(createParam<MonomeKnob>(Vec(12, 30), module, WhiteWhaleModule::PARAM_PARAM, 0.0, 1.0, 0.5));
@@ -39,6 +37,8 @@ WhiteWhaleWidget::WhiteWhaleWidget()
     addOutput(createOutput<PJ301MPort>(Vec(13, 138), module, WhiteWhaleModule::CVB_OUTPUT));
     addInput(createInput<PJ301MPort>(Vec(13, 286), module, WhiteWhaleModule::CLOCK_INPUT));
     addOutput(createOutput<PJ301MPort>(Vec(50, 286), module, WhiteWhaleModule::CLOCK_OUTPUT));
+
+    addInput(createInput<USBAJack>(Vec(8, 324), module, WhiteWhaleModule::USB_INPUT));
 }
 
 void WhiteWhaleWidget::randomize()

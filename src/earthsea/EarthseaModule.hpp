@@ -15,6 +15,7 @@ struct EarthseaModule : MonomeModuleBase
 
     enum InputIds
     {
+        USB_INPUT,
         NUM_INPUTS
     };
 
