@@ -21,17 +21,12 @@
 
 struct GridConnection;
 
-struct MonomeModuleBase : rack::Module
+struct MonomeModuleBase : rack::Module, IGridConsumer
 {
     FirmwareManager firmware;
 
     MonomeModuleBase(int numParams, int numInputs, int numOutputs, int numLights);
-    ~MonomeModuleBase();
 
-    static std::vector<MonomeModuleBase*> allModules;
-
-    void deviceFound(const MonomeDevice* const device);
-    void deviceRemoved(const std::string& id);
     void buttonPressMessageReceived(MonomeDevice* device, int x, int y, bool state);
 
     // Rack module methods
@@ -44,12 +39,12 @@ struct MonomeModuleBase : rack::Module
     virtual void processOutputs() = 0;
     virtual void readSerialMessages();
 
-    void scheduleGridConnectionEvent(GridConnection* newConnection);
-    void processGridConnectionEvent(GridConnection* newConnection);
+    void setUSBInputPort(int portId);
+    void updateConnectedDevice(GridConnection* newConnection);
 
     std::deque<GridConnection*> connectionEvents;
 
-    GridConnection* gridConnection;
+    MonomeDevice* connectedDevice;
+    int usbPortId;
     bool firstStep;
-    std::string unresolvedConnectionId;
 };

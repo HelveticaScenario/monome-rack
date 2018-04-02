@@ -12,7 +12,6 @@ std::vector<MonomeModuleBase*> MonomeModuleBase::allModules;
 MonomeModuleBase::MonomeModuleBase(int numParams, int numInputs, int numOutputs, int numLights)
     : Module(numParams, numInputs, numOutputs, numLights)
 {
-    gridConnection = NULL;
     firstStep = true;
 
     allModules.push_back(this);
@@ -20,34 +19,32 @@ MonomeModuleBase::MonomeModuleBase(int numParams, int numInputs, int numOutputs,
 
 MonomeModuleBase::~MonomeModuleBase()
 {
-    allModules.erase(std::remove(allModules.begin(), allModules.end(), this));
-    if (gridConnection)
-    {
-        GridConnectionManager::theManager->disconnectDevice(gridConnection->device);
-        delete gridConnection;
-    }
 }
 
-void MonomeModuleBase::scheduleGridConnectionEvent(GridConnection* newConnection)
+void MonomeModuleBase::setUSBInputPort(int portId)
 {
-    connectionEvents.push_back(newConnection);
+    usbPortId = portId;
 }
 
-void MonomeModuleBase::processGridConnectionEvent(GridConnection* newConnection)
+void MonomeModuleBase::onUSBConnectionChanged()
 {
-    if (gridConnection)
+    MonomeDevice* device = nullptr;
+
+    if (usbPortId >= 0 && inputs[usbPortId].active)
     {
-        gridConnection->clearAll();
-        delete gridConnection;
+        IGridController* grid = dynamic_cast<IGridController*>(inputs[usbPortId])
     }
 
-    gridConnection = newConnection;
-
-    if (gridConnection)
+    if (device == connectedDevice)
     {
-        unresolvedConnectionId = "";
+        return;
+    }
 
-        string id = gridConnection->device->id;
+    connectedDevice = device;
+
+    if (connectedDevice)
+    {
+        string id = connectedDevice->id;
         string wide_id;
         for (int i = 0; i < id.length(); i++)
         {
@@ -61,7 +58,7 @@ void MonomeModuleBase::processGridConnectionEvent(GridConnection* newConnection)
         firmware.serialConnectionChange(FTDI_BUS, 1, "m o n o m e", "p r o d u c t", wide_id.c_str());
 
         uint8_t buf[6] = { 0, 1, 0, 0, 0, 0 };
-        buf[2] = (gridConnection->device->width * gridConnection->device->height) / 64;
+        buf[2] = (connectedDevice->width * connectedDevice->height) / 64;
         firmware.writeSerial(FTDI_BUS, buf, 6);
         uint8_t buf2[2] = { 0, 0 };
         firmware.writeSerial(FTDI_BUS, buf2, 2);
@@ -69,23 +66,6 @@ void MonomeModuleBase::processGridConnectionEvent(GridConnection* newConnection)
     else
     {
         firmware.serialConnectionChange(FTDI_BUS, 0, NULL, NULL, NULL);
-    }
-}
-
-void MonomeModuleBase::deviceFound(const MonomeDevice* const device)
-{
-    if (!gridConnection && device->id == unresolvedConnectionId)
-    {
-        GridConnectionManager::theManager->connectModuleToDeviceId(this, unresolvedConnectionId);
-    }
-}
-
-void MonomeModuleBase::deviceRemoved(const std::string& id)
-{
-    if (gridConnection && gridConnection->device->id == id)
-    {
-        unresolvedConnectionId = id;
-        delete gridConnection;
     }
 }
 

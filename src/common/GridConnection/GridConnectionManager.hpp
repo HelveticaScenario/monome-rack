@@ -19,6 +19,8 @@ struct GridConnectionManager : SerialOsc::Listener
     // SerialOsc::Listener methods
     void deviceFound(const MonomeDevice* const device) override;
     void deviceRemoved(const std::string& id) override;
+
+    /*
     void buttonPressMessageReceived(MonomeDevice* device, int x, int y, bool state) override;
 
     void getDevices(std::vector<MonomeDevice*>& devices);
@@ -30,4 +32,5 @@ struct GridConnectionManager : SerialOsc::Listener
 protected:
     void createConnection(MonomeModuleBase* module, GridConnection* connection);
     std::map<const MonomeDevice* const, MonomeModuleBase*> activeConnections;
+    */
 };

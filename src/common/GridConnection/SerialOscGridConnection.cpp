@@ -2,8 +2,8 @@
 #include "GridConnectionManager.hpp"
 #include "MonomeModuleBase.hpp"
 
-SerialOscGridConnection::SerialOscGridConnection(MonomeModuleBase* module, const MonomeDevice* const device)
-    : GridConnection(module, device)
+SerialOscGridConnection::SerialOscGridConnection(const MonomeDevice* const device)
+    : device(device)
 {
 }
 
@@ -55,9 +55,4 @@ void SerialOscGridConnection::updateQuadrant(int x, int y, uint8_t* leds)
 void SerialOscGridConnection::clearAll()
 {
     GridConnectionManager::theManager->serialOscDriver->sendDeviceLedAllCommand(device, false);
-}
-
-bool SerialOscGridConnection::operator==(const SerialOscGridConnection& other) const
-{
-    return (this->device == other.device && this->module == other.module);
 }

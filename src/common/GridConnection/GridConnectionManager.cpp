@@ -28,7 +28,7 @@ void GridConnectionManager::deviceRemoved(const std::string& id)
         m->deviceRemoved(id);
     }
 }
-
+/*
 void GridConnectionManager::buttonPressMessageReceived(MonomeDevice* device, int x, int y, bool state)
 {
     for (auto m : MonomeModuleBase::allModules)
@@ -161,3 +161,5 @@ void GridConnectionManager::createConnection(MonomeModuleBase* module, GridConne
     module->scheduleGridConnectionEvent(connection);
     printf("connected %s to %p", connection->device->id.c_str(), module);
 }
+
+*/

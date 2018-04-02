@@ -2,13 +2,13 @@
 
 #pragma once
 
-struct SerialOscGridConnection : GridConnection
+struct SerialOscGridConnection : IGridDevice
 {
-    SerialOscGridConnection(MonomeModuleBase* controlledModule, const MonomeDevice* const device);
+    SerialOscGridConnection(const MonomeDevice* const device);
 
     void updateRow(int x_offset, int y, uint8_t bitfield) override;
     void updateQuadrant(int x, int y, uint8_t* leds) override;
     void clearAll() override;
 
-    bool operator==(const SerialOscGridConnection& other) const;
+    const MonomeDevice* const device;
 };
