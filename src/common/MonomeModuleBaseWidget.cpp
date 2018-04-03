@@ -3,18 +3,36 @@
 
 using namespace rack;
 
-struct MonomeConnectionItem : rack::MenuItem
-{
-    MonomeModuleBase* module;
-    MonomeDevice* device;
 
-    void onAction(rack::EventAction& e) override
+// Copied from Rack AddModuleWindow.cpp, where it's otherwise inaccessible
+struct UrlItem : rack::MenuItem
+{
+    std::string url;
+    void onAction(EventAction& e) override
     {
-        GridConnectionManager::theManager->connectModuleToDevice(module, device);
+        std::thread t(rack::systemOpenBrowser, url);
+        t.detach();
     }
 };
 
-MonomeModuleBaseWidget::MonomeModuleBaseWidget()
+/*
+template <typename C>
+bool connectionPtrIsEqual(GridConnection* genericPtr, C* specificPtr)
+{
+    C* castPtr = static_cast<C*>(genericPtr);
+    if (castPtr == NULL || specificPtr == NULL)
+    {
+        return false;
+    }
+    else
+    {
+        return *castPtr == *specificPtr;
+    }
+}
+*/
+
+MonomeModuleBaseWidget::MonomeModuleBaseWidget(MonomeModuleBase* module)
+: ModuleWidget(module)
 {
 }
 
@@ -22,8 +40,14 @@ Menu* MonomeModuleBaseWidget::createContextMenu()
 {
     rack::Menu* menu = ModuleWidget::createContextMenu();
 
-    auto module = static_cast<MonomeModuleBase*>(this->module);
+    //auto module = static_cast<MonomeModuleBase*>(this->module);
 
+    auto helpItem = new UrlItem();
+    helpItem->url = "https://github.com/Dewb/monome-rack/blob/master/README.md";
+    helpItem->text = "Help";
+    menu->addChild(helpItem);
+
+/*
     menu->addChild(construct<MenuEntry>());
     menu->addChild(construct<MenuLabel>(&MenuLabel::text, "Device Connection"));
 
@@ -44,6 +68,7 @@ Menu* MonomeModuleBaseWidget::createContextMenu()
     {
         menu->addChild(construct<MenuLabel>(&MenuLabel::text, "(no physical or virtual devices found)"));
     }
+*/
 
     return menu;
 }

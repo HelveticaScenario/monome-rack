@@ -1,6 +1,7 @@
 #include "VirtualGridWidget.hpp"
 #include "MonomeWidgets.hpp"
 #include "VirtualGridModule.hpp"
+#include "window.hpp"
 
 #include <iomanip>
 #include <random>
@@ -82,7 +83,7 @@ struct MonomeKey : rack::ParamWidget
 
     void beginPress()
     {
-        if (rack::guiIsModPressed() && value != HELD)
+        if (rack::windowIsModPressed() && value != HELD)
         {
             // hold key down
             setValue(HELD);
@@ -195,7 +196,8 @@ std::string getUniqueVirtualDeviceId(std::string prefix)
     }
 }
 
-VirtualGridWidget::VirtualGridWidget(unsigned w, unsigned h, unsigned model)
+VirtualGridWidget::VirtualGridWidget(VirtualGridModule* module, unsigned w, unsigned h, unsigned model)
+: ModuleWidget(module)
 {
     if (model > 5)
     {
@@ -203,10 +205,7 @@ VirtualGridWidget::VirtualGridWidget(unsigned w, unsigned h, unsigned model)
     }
     std::string models[6] = { "mv40h", "mv64-", "mv128-", "mv256-", "mv512", "mv" };
 
-    auto* module = new VirtualGridModule(w, h);
     module->device.id = getUniqueVirtualDeviceId(models[model]);
-    setModule(module);
-
     theme = model == 5 ? VariYellow : MonoRed;
 
     int plugOffset = 24;
@@ -235,7 +234,7 @@ VirtualGridWidget::VirtualGridWidget(unsigned w, unsigned h, unsigned model)
             int y = margins.y + j * (button_size + spacing);
             int n = i + j * w;
 
-            MonomeKey* key = (MonomeKey*)createParam<MonomeKey>(Vec(x, y), module, n, 0, 2.0, 0);
+            MonomeKey* key = (MonomeKey*)ParamWidget::create<MonomeKey>(Vec(x, y), module, n, 0, 2.0, 0);
             key->setKeyAddress(module->ledBuffer + i + j * 16);
             key->box.size = Vec(button_size, button_size);
             key->index = n;
@@ -320,7 +319,7 @@ void VirtualGridWidget::onMouseDown(EventMouseDown& e)
 
     if (e.target == this && e.button == 0)
     {
-        if (guiIsModPressed())
+        if (rack::windowIsModPressed())
         {
             clearHeldKeys();
             e.consumed = true;
@@ -385,12 +384,12 @@ Menu* VirtualGridWidget::createContextMenu()
     auto gridModule = dynamic_cast<VirtualGridModule*>(module);
 
     MenuLabel* menuLabel = new MenuLabel();
-    menuLabel->text = model->manufacturer + " " + model->name + " (" + gridModule->device.id + ")";
+    menuLabel->text = model->name + " (" + gridModule->device.id + ")";
     menu->addChild(menuLabel);
 
     auto* cloneItem = new CloneMenuItem();
     cloneItem->text = "Duplicate";
-    cloneItem->rightText = GUI_MOD_KEY_NAME "+D";
+    cloneItem->rightText = WINDOW_MOD_KEY_NAME "+D";
     cloneItem->moduleWidget = this;
     menu->addChild(cloneItem);
 
@@ -404,7 +403,7 @@ Menu* VirtualGridWidget::createContextMenu()
     menu->addChild(construct<MenuLabel>(&MenuLabel::text, "Actions"));
     auto* releaseItem = new GridReleaseHeldKeysItem();
     releaseItem->text = "Release held keys";
-    releaseItem->rightText = GUI_MOD_KEY_NAME "+Click";
+    releaseItem->rightText = WINDOW_MOD_KEY_NAME "+Click";
     releaseItem->grid = this;
     menu->addChild(releaseItem);
 

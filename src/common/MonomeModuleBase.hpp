@@ -27,7 +27,7 @@ struct MonomeModuleBase : rack::Module, IGridConsumer
 
     MonomeModuleBase(int numParams, int numInputs, int numOutputs, int numLights);
 
-    void buttonPressMessageReceived(MonomeDevice* device, int x, int y, bool state);
+    virtual void buttonPressMessageReceived(int x, int y, bool state) override;
 
     // Rack module methods
     void step() override;

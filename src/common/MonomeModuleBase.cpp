@@ -7,18 +7,11 @@
 
 using namespace std;
 
-std::vector<MonomeModuleBase*> MonomeModuleBase::allModules;
 
 MonomeModuleBase::MonomeModuleBase(int numParams, int numInputs, int numOutputs, int numLights)
     : Module(numParams, numInputs, numOutputs, numLights)
 {
     firstStep = true;
-
-    allModules.push_back(this);
-}
-
-MonomeModuleBase::~MonomeModuleBase()
-{
 }
 
 void MonomeModuleBase::setUSBInputPort(int portId)
@@ -32,7 +25,9 @@ void MonomeModuleBase::onUSBConnectionChanged()
 
     if (usbPortId >= 0 && inputs[usbPortId].active)
     {
-        IGridController* grid = dynamic_cast<IGridController*>(inputs[usbPortId])
+        auto port = inputs[usbPortId];
+        
+        IGridDevice* grid = dynamic_cast<IGridDevice*>()
     }
 
     if (device == connectedDevice)
@@ -69,7 +64,7 @@ void MonomeModuleBase::onUSBConnectionChanged()
     }
 }
 
-void MonomeModuleBase::buttonPressMessageReceived(MonomeDevice* device, int x, int y, bool state)
+void MonomeModuleBase::buttonPressMessageReceived(int x, int y, bool state)
 {
     uint8_t msg[4] = { 0xF0, 0, 0, 0 };
     msg[1] = (uint8_t)x;

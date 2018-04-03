@@ -15,4 +15,4 @@ struct IGridDevice
 struct IGridConsumer
 {
     virtual void buttonPressMessageReceived(int x, int y, bool state) = 0;
-}
+};
