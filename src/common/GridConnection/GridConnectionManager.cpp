@@ -1,10 +1,8 @@
 #include "GridConnectionManager.hpp"
 #include "MonomeModuleBase.hpp"
-#include "SerialOscGridConnection.hpp"
-#include "VirtualGridConnection.hpp"
 #include "VirtualGridModule.hpp"
 #include "VirtualGridWidget.hpp"
-
+/*
 GridConnectionManager* GridConnectionManager::theManager = new GridConnectionManager();
 
 GridConnectionManager::GridConnectionManager()
@@ -28,7 +26,8 @@ void GridConnectionManager::deviceRemoved(const std::string& id)
         m->deviceRemoved(id);
     }
 }
-/*
+
+
 void GridConnectionManager::buttonPressMessageReceived(MonomeDevice* device, int x, int y, bool state)
 {
     for (auto m : MonomeModuleBase::allModules)

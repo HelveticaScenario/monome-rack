@@ -1,7 +1,7 @@
 #include "GridConnection.hpp"
 
 #pragma once
-
+/*
 struct SerialOscGridConnection : IGridDevice
 {
     SerialOscGridConnection(const MonomeDevice* const device);
@@ -12,3 +12,4 @@ struct SerialOscGridConnection : IGridDevice
 
     const MonomeDevice* const device;
 };
+*/

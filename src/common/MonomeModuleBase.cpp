@@ -21,25 +21,25 @@ void MonomeModuleBase::setUSBInputPort(int portId)
 
 void MonomeModuleBase::onUSBConnectionChanged()
 {
-    MonomeDevice* device = nullptr;
+    IGridDevice* newDevice = nullptr;
 
     if (usbPortId >= 0 && inputs[usbPortId].active)
     {
         auto port = inputs[usbPortId];
-        
-        IGridDevice* grid = dynamic_cast<IGridDevice*>()
+        Module* module = nullptr; // todo: find module at other end of connection
+        newDevice = dynamic_cast<IGridDevice*>(module);
     }
 
-    if (device == connectedDevice)
+    if (newDevice == connectedDevice)
     {
         return;
     }
 
-    connectedDevice = device;
+    connectedDevice = newDevice;
 
     if (connectedDevice)
     {
-        string id = connectedDevice->id;
+        string id = connectedDevice->getDeviceInfo()->id;
         string wide_id;
         for (int i = 0; i < id.length(); i++)
         {
@@ -53,7 +53,7 @@ void MonomeModuleBase::onUSBConnectionChanged()
         firmware.serialConnectionChange(FTDI_BUS, 1, "m o n o m e", "p r o d u c t", wide_id.c_str());
 
         uint8_t buf[6] = { 0, 1, 0, 0, 0, 0 };
-        buf[2] = (connectedDevice->width * connectedDevice->height) / 64;
+        buf[2] = (connectedDevice->getDeviceInfo()->width * connectedDevice->getDeviceInfo()->height) / 64;
         firmware.writeSerial(FTDI_BUS, buf, 6);
         uint8_t buf2[2] = { 0, 0 };
         firmware.writeSerial(FTDI_BUS, buf2, 2);
@@ -85,9 +85,9 @@ void MonomeModuleBase::readSerialMessages()
             // 40h protocol row update
             uint8_t y = msg[0] & 0x0F;
             uint8_t bitfield = msg[1];
-            if (gridConnection)
+            if (connectedDevice)
             {
-                gridConnection->updateRow(0, y, bitfield);
+                connectedDevice->updateRow(0, y, bitfield);
             }
             if (count > 2) // there are more 0x7x two-byte commands in this serial message
             {
@@ -108,9 +108,9 @@ void MonomeModuleBase::readSerialMessages()
                 leds[2 * i + 1] = msg[3 + i] & 0xF;
             }
 
-            if (gridConnection)
+            if (connectedDevice)
             {
-                gridConnection->updateQuadrant(x, y, leds);
+                connectedDevice->updateQuadrant(x, y, leds);
             }
         }
         else if ((msg[0] & 0x80) == 0x80 && count >= 9)
@@ -127,9 +127,9 @@ void MonomeModuleBase::readSerialMessages()
                 }
             }
 
-            if (gridConnection)
+            if (connectedDevice)
             {
-                gridConnection->updateQuadrant(x, y, leds);
+                connectedDevice->updateQuadrant(x, y, leds);
             }
         }
         else if (msg[0] == 0x01)
@@ -143,10 +143,9 @@ void MonomeModuleBase::readSerialMessages()
 
 void MonomeModuleBase::step()
 {
-    // Execute setup tasks that must be run after full Rack is deserialized from JSON
-    if (firstStep && unresolvedConnectionId != "")
+    if (firstStep)
     {
-        GridConnectionManager::theManager->connectModuleToDeviceId(this, unresolvedConnectionId);
+        onUSBConnectionChanged();
         firstStep = false;
     }
 
@@ -165,24 +164,11 @@ void MonomeModuleBase::step()
     // Act on serial output from module to the outside world (grid LEDs, etc.)
     readSerialMessages();
 
-    // Process grid connection events, one per frame
-    if (connectionEvents.size() > 0)
-    {
-        processGridConnectionEvent(connectionEvents.front());
-        connectionEvents.pop_front();
-    }
 }
 
 json_t* MonomeModuleBase::toJson()
 {
-    std::string deviceId = unresolvedConnectionId;
-    if (gridConnection)
-    {
-        deviceId = gridConnection->device->id;
-    }
-
     json_t* rootJ = json_object();
-    json_object_set_new(rootJ, "connectedDeviceId", json_string(deviceId.c_str()));
 
     void* data;
     uint32_t size;
@@ -204,14 +190,6 @@ json_t* MonomeModuleBase::toJson()
 
 void MonomeModuleBase::fromJson(json_t* rootJ)
 {
-    delete gridConnection;
-
-    json_t* id = json_object_get(rootJ, "connectedDeviceId");
-    if (id)
-    {
-        unresolvedConnectionId = json_string_value(id);
-    }
-
     void* data;
     uint32_t size;
     json_t* jd;

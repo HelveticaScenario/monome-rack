@@ -27,6 +27,10 @@ struct MonomeModuleBase : rack::Module, IGridConsumer
 
     MonomeModuleBase(int numParams, int numInputs, int numOutputs, int numLights);
 
+    IGridDevice* connectedDevice;
+    
+    // IGridConsumer virtual methods
+    virtual IGridDevice* getConnectedDevice() { return connectedDevice; }
     virtual void buttonPressMessageReceived(int x, int y, bool state) override;
 
     // Rack module methods
@@ -40,11 +44,11 @@ struct MonomeModuleBase : rack::Module, IGridConsumer
     virtual void readSerialMessages();
 
     void setUSBInputPort(int portId);
-    void updateConnectedDevice(GridConnection* newConnection);
+    void onUSBConnectionChanged();
 
-    std::deque<GridConnection*> connectionEvents;
+//    std::deque<GridConnection*> connectionEvents;
 
-    MonomeDevice* connectedDevice;
+    
     int usbPortId;
     bool firstStep;
 };

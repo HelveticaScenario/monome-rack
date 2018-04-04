@@ -5,6 +5,7 @@ WhiteWhaleModule::WhiteWhaleModule()
 {
     firmware.load("./plugins/monome-rack/build/firmware/whitewhale");
     firmware.init();
+    setUSBInputPort(USB_INPUT);
 }
 
 void WhiteWhaleModule::processInputs()

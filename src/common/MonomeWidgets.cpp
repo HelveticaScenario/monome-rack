@@ -46,6 +46,8 @@ void USBConnectorPort::onDragEnter(rack::EventDragEnter& e)
             return;
     }
 
+    
+
     SVGPort::onDragEnter(e);
 }
 

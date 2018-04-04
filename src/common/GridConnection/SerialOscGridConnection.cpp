@@ -1,7 +1,7 @@
 #include "SerialOscGridConnection.hpp"
 #include "GridConnectionManager.hpp"
 #include "MonomeModuleBase.hpp"
-
+/*
 SerialOscGridConnection::SerialOscGridConnection(const MonomeDevice* const device)
     : device(device)
 {
@@ -56,3 +56,4 @@ void SerialOscGridConnection::clearAll()
 {
     GridConnectionManager::theManager->serialOscDriver->sendDeviceLedAllCommand(device, false);
 }
+*/

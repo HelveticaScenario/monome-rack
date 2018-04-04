@@ -26,7 +26,7 @@ void VirtualGridModule::step()
                 int n = i + (j * device.width);
                 if ((params[n].value > 0) != pressedState[n])
                 {
-                    connectedModule->buttonPressMessageReceived(NULL, i, j, params[n].value > 0);
+                    connectedModule->buttonPressMessageReceived(i, j, params[n].value > 0);
                     pressedState[n] = params[n].value > 0;
                 }
             }

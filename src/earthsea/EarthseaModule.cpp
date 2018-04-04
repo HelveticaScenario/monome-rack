@@ -6,6 +6,7 @@ EarthseaModule::EarthseaModule()
 {
     firmware.load("./plugins/monome-rack/build/firmware/earthsea");
     firmware.init();
+    setUSBInputPort(USB_INPUT);
 }
 
 void EarthseaModule::processInputs()

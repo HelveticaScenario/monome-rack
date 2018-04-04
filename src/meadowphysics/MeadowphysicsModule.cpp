@@ -6,6 +6,7 @@ MeadowphysicsModule::MeadowphysicsModule()
 {
     firmware.load("./plugins/monome-rack/build/firmware/meadowphysics");
     firmware.init();
+    setUSBInputPort(USB_INPUT);
 }
 
 void MeadowphysicsModule::processInputs()
