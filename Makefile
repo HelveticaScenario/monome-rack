@@ -5,7 +5,7 @@ SHELL:=/bin/bash -O extglob
 RACK_DIR ?= ../..
 
 FLAGS += \
-	-o0 \
+	-O0 \
 	-Werror=implicit-function-declaration \
 	-Isrc \
 	-Isrc/common \
