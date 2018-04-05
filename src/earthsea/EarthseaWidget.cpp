@@ -5,7 +5,7 @@
 using namespace rack;
 
 EarthseaWidget::EarthseaWidget(EarthseaModule* module)
-: MonomeModuleBaseWidget(module)
+    : MonomeModuleBaseWidget(module)
 {
     box.size = Vec(15 * 6, 380);
 
@@ -33,7 +33,8 @@ EarthseaWidget::EarthseaWidget(EarthseaModule* module)
     addOutput(Port::create<PJ301MPort>(Vec(50, 286), Port::OUTPUT, module, EarthseaModule::POS_OUTPUT));
     addOutput(Port::create<PJ301MPort>(Vec(13, 268), Port::OUTPUT, module, EarthseaModule::EDGE_OUTPUT));
 
-    addInput(Port::create<USBAJack>(Vec(8, 324), Port::INPUT, module, EarthseaModule::USB_INPUT));
+    auto usbPort = Port::create<USBAJack>(Vec(8, 324), Port::INPUT, module, EarthseaModule::USB_INPUT);
+    addInput(usbPort);
 }
 
 void EarthseaWidget::randomize()

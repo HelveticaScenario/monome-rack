@@ -19,14 +19,26 @@ void MonomeModuleBase::setUSBInputPort(int portId)
     usbPortId = portId;
 }
 
+rack::Module* lookupOutputModuleFromInput(rack::Module* inputModule, int inputId)
+{
+    for (auto wire : rack::gWires)
+    {
+        if (wire->inputModule == inputModule && wire->inputId == inputId)
+        {
+            return wire->outputModule;
+        }
+    }
+
+    return nullptr;
+}
+
 void MonomeModuleBase::onUSBConnectionChanged()
 {
     IGridDevice* newDevice = nullptr;
 
     if (usbPortId >= 0 && inputs[usbPortId].active)
     {
-        auto port = inputs[usbPortId];
-        Module* module = nullptr; // todo: find module at other end of connection
+        auto module = lookupOutputModuleFromInput(this, usbPortId);
         newDevice = dynamic_cast<IGridDevice*>(module);
     }
 
@@ -143,7 +155,7 @@ void MonomeModuleBase::readSerialMessages()
 
 void MonomeModuleBase::step()
 {
-    if (firstStep)
+    //if (firstStep)
     {
         onUSBConnectionChanged();
         firstStep = false;

@@ -1,5 +1,6 @@
 #include "SerialOsc.h"
 #include "rack.hpp"
+#include "GridConnection.hpp"
 
 #pragma once
 
@@ -7,7 +8,7 @@
 
 struct MonomeModuleBase;
 
-struct VirtualGridModule : rack::Module
+struct VirtualGridModule : IGridDevice
 {
     enum OutputIds
     {
@@ -28,9 +29,10 @@ struct VirtualGridModule : rack::Module
     json_t* toJson() override;
     void fromJson(json_t* rootJ) override;
 
-    void updateRow(int x_offset, int y, uint8_t bitfield);
-    void updateQuadrant(int x_offset, int y_offset, uint8_t* leds);
-    void clearAll();
+    virtual MonomeDevice* getDeviceInfo() override { return &device; }
+    virtual void updateRow(int x_offset, int y, uint8_t bitfield) override;
+    virtual void updateQuadrant(int x_offset, int y_offset, uint8_t* leds) override;
+    virtual void clearAll() override;
 };
 
 

@@ -5,7 +5,7 @@
 using namespace rack;
 
 MeadowphysicsWidget::MeadowphysicsWidget(MeadowphysicsModule* module)
-: MonomeModuleBaseWidget(module)
+    : MonomeModuleBaseWidget(module)
 {
     box.size = Vec(15 * 6, 380);
 
@@ -40,7 +40,8 @@ MeadowphysicsWidget::MeadowphysicsWidget(MeadowphysicsModule* module)
     addInput(Port::create<PJ301MPort>(Vec(13, 286), Port::INPUT, module, MeadowphysicsModule::CLOCK_INPUT));
     addOutput(Port::create<PJ301MPort>(Vec(50, 286), Port::OUTPUT, module, MeadowphysicsModule::CLOCK_OUTPUT));
 
-    addInput(Port::create<USBAJack>(Vec(8, 324), Port::INPUT, module, MeadowphysicsModule::USB_INPUT));
+    auto usbPort = Port::create<USBAJack>(Vec(8, 324), Port::INPUT, module, MeadowphysicsModule::USB_INPUT);
+    addInput(usbPort);
 }
 
 void MeadowphysicsWidget::randomize()
