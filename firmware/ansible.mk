@@ -12,6 +12,7 @@ FLAGS = \
 	-Iansible/libavr32/src \
 	-Iansible/libavr32/conf \
 	-Iansible/libavr32/conf/trilogy \
+	-Iansible/libavr32/src/euclidean \
 	-Iansible/libavr32/src/usb/midi                                    
 	
 SOURCES = \
@@ -24,8 +25,18 @@ SOURCES = \
 	ansible/libavr32/src/timers.c \
 	ansible/libavr32/src/monome.c \
 	ansible/libavr32/src/util.c \
+	ansible/libavr32/src/music.c \
+	ansible/libavr32/src/arp.c \
+	ansible/libavr32/src/notes.c \
+	ansible/libavr32/src/random.c \
+	ansible/libavr32/src/midi_common.c \
+	ansible/libavr32/src/euclidean/euclidean.c \
+	ansible/libavr32/src/euclidean/data.c \
 	mock_hardware/adapter.c \
-	mock_hardware/mock_hardware.c
+	mock_hardware/mock_hardware.c\
+	mock_hardware/stubs/dac.c\
+	mock_hardware/stubs/init_ansible.c\
+	mock_hardware/stubs/i2c.c\
 
 TARGETNAME = ../res/firmware/ansible
 

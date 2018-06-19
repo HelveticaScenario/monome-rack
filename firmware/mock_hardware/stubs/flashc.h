@@ -1,4 +1,7 @@
 
+#include <stdbool.h>
+#include <stdint.h>
+#include <string.h>
 void hardware_declareNVRAM(const void* ptr, uint32_t bytes);
 void hardware_declareVRAM(const void* ptr, uint32_t bytes);
 

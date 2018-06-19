@@ -1,3 +1,5 @@
+#include "AnsibleModule.hpp"
+#include "AnsibleWidget.hpp"
 #include "EarthseaModule.hpp"
 #include "EarthseaWidget.hpp"
 #include "MeadowphysicsModule.hpp"
@@ -23,6 +25,7 @@ void init(Plugin* p)
     Model* modelWhiteWhale = Model::create<WhiteWhaleModule, WhiteWhaleWidget>("monome", "whitewhale", "white whale", SEQUENCER_TAG, CLOCK_TAG, EXTERNAL_TAG);
     Model* modelMeadowphysics = Model::create<MeadowphysicsModule, MeadowphysicsWidget>("monome", "meadowphysics", "meadowphysics", SEQUENCER_TAG, CLOCK_TAG, EXTERNAL_TAG);
     Model* modelEarthsea = Model::create<EarthseaModule, EarthseaWidget>("monome", "earthsea", "earthsea", SEQUENCER_TAG, EXTERNAL_TAG);
+    Model* modelAnsible = Model::create<AnsibleModule, AnsibleWidget>("monome", "ansible", "ansible", SEQUENCER_TAG, EXTERNAL_TAG);
 
     Model* modelGrid128 = Model::create<VirtualGridModuleTemplate<16, 8, 5>, VirtualGridWidgetTemplate<16, 8, 5>>("monome", "grid128", "virtual grid 128", CONTROLLER_TAG);
     Model* modelGrid64 = Model::create<VirtualGridModuleTemplate<8, 8, 5>, VirtualGridWidgetTemplate<8, 8, 5>>("monome", "grid64", "virtual grid 64", CONTROLLER_TAG);
@@ -32,6 +35,7 @@ void init(Plugin* p)
     p->addModel(modelWhiteWhale);
     p->addModel(modelMeadowphysics);
     p->addModel(modelEarthsea);
+    p->addModel(modelAnsible);
 
     p->addModel(modelGrid128);
     p->addModel(modelGrid64);
